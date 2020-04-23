@@ -45,15 +45,22 @@ Seu trabalho é implementar as funções print_words() e depois print_top().
 """
 
 import sys
-from collections import Counter
+from typing import Dict
 
 
-def parse_file(file) -> Counter:
-    with open("letras.txt", "r") as file:
-        for line in list(file.readlines()):
-            line_parsed = Counter([l.lower() for l in line])
-            del line_parsed[" "]
-    return line_parsed
+def parse_file(file) -> Dict:
+    d = {}
+    with open("letras.txt", "r") as f:
+        content = f.read()
+
+    content = content.lower()
+    words = content.split()
+
+    for w in words:
+        if w not in d:
+            d[w] = 0
+        d[w] += 1
+    return d
 
 
 def print_words(filename):
@@ -64,10 +71,7 @@ def print_words(filename):
 
 def print_top(filename):
     line_parsed = parse_file(filename)
-    line_parsed_ordered = {
-        k: v
-        for k, v in sorted(line_parsed.items(), key=lambda item: item[1], reverse=True)
-    }
+    line_parsed_ordered = {k: v for k, v in sorted(line_parsed.items(), key=lambda item: item[1], reverse=True)}
     for word in line_parsed_ordered:
         print(f"{word} {line_parsed_ordered[word]}")
 
