@@ -45,10 +45,10 @@ Seu trabalho é implementar as funções print_words() e depois print_top().
 """
 
 import sys
-from typing import Dict
+from os.path import join
 
 
-def parse_file(file) -> Dict:
+def parse_file(file):
     d = {}
     with open("letras.txt", "r") as f:
         content = f.read()
@@ -60,20 +60,33 @@ def parse_file(file) -> Dict:
         if w not in d:
             d[w] = 0
         d[w] += 1
-    return d
+
+    return d.items()
 
 
 def print_words(filename):
-    line_parsed = parse_file(filename)
-    for word in sorted(line_parsed.keys()):
-        print(f"{word} {line_parsed[word]}")
+    word_count = parse_file(filename)
+
+    word_count = sorted(word_count)
+    l = []
+    for w, c in word_count:
+        l.append(f"{w} {c}")
+    out = "\n".join(l)
+
+    return out
 
 
 def print_top(filename):
-    line_parsed = parse_file(filename)
-    line_parsed_ordered = {k: v for k, v in sorted(line_parsed.items(), key=lambda item: item[1], reverse=True)}
-    for word in line_parsed_ordered:
-        print(f"{word} {line_parsed_ordered[word]}")
+    word_count = parse_file(filename)
+
+    word_count = sorted(word_count, key=lambda t: t[-1], reverse=True)[:20]
+
+    l = []
+    for w, c in word_count:
+        l.append(f"{w} {c}")
+    out = "\n".join(l)
+
+    return out
 
 
 # A função abaixo chama print_words() ou print_top() de acordo com os parêtros do programa.
@@ -85,9 +98,9 @@ def main():
     option = sys.argv[1]
     filename = sys.argv[2]
     if option == "--count":
-        print_words(filename)
+        print(print_words(filename))
     elif option == "--topcount":
-        print_top(filename)
+        print(print_top(filename))
     else:
         print("unknown option: " + option)
         sys.exit(1)
